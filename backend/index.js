@@ -1,15 +1,24 @@
 import express  from "express";
-import mysql from "mysql"
+import mysql from "mysql2"
 import cors from "cors"
 
 const app = express();
 
 const db = mysql.createConnection({
-    host: "localhost",
+    host: "mysql_db",
     user: "root",
-    password: "",
-    database: "test"
+    password: "root",
+    database: "test",
 })
+
+db.connect(err => {
+    if (err) {
+        console.error("Database connection failed: ", err);
+        return;
+    }
+    console.log("Connected to MySQL database!");
+});
+
 
 app.use(express.json())//return json data using the api server postman
 
@@ -23,8 +32,8 @@ app.get("/", (req,res)=>{
 app.get("/books", (req,res)=>{
     const query = "SELECT * FROM books"
     db.query(query, (err,data)=>{
-          if(err) return res.json(err)
-          return res.json(data)
+        if (err) return res.status(500).json(err)
+        return res.json(data)
     })
   })
 
@@ -48,7 +57,7 @@ app.get("/books", (req,res)=>{
     ]
 
     db.query(query, [values], (err,data)=>{
-        if(err) return res.json(err)
+        if (err) return res.status(500).json(err)
         return res.json("Book has been created successfully!!!")
     })
   })
@@ -58,7 +67,7 @@ app.get("/books", (req,res)=>{
       const query = "DELETE FROM books WHERE id = ?"
 
       db.query(query, [bookID], (err, data)=>{
-        if(err) return res.json(err)
+          if (err) return res.status(500).json(err)
         return res.json("Book has been deleted successfully!!!")
       } )
   })
@@ -75,14 +84,14 @@ app.get("/books", (req,res)=>{
     ]
 
     db.query(query, [...values, bookID], (err, data)=>{
-      if(err) return res.json(err)
-      return res.json("Book has been updated successfully!!!")
+        if (err) return res.status(500).json(err)
+        return res.json("Book has been updated successfully!!!")
     } )
 })
 
-
-app.listen(8800, ()=>{
-    console.log("Connect to the backend!!!!")
+const PORT = process.env.PORT || 8800;
+app.listen(PORT, "0.0.0.0", ()=>{
+    console.log("Server is running on 8800, Connect to the backend!!!!")
 })
 
 //npm start
