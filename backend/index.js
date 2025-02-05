@@ -4,25 +4,31 @@ import cors from "cors"
 
 const app = express();
 
+app.use(express.json())//return json data using the api server postman
+
+app.use(cors())
+
+console.log("🚀 Backend is starting...");
+
 const db = mysql.createConnection({
     host: "mysql_db",
     user: "root",
     password: "root",
     database: "test",
-})
-
-db.connect(err => {
-    if (err) {
-        console.error("Database connection failed: ", err);
-        return;
-    }
-    console.log("Connected to MySQL database!");
 });
 
 
-app.use(express.json())//return json data using the api server postman
-
-app.use(cors())
+console.log("🛠 Attempting to connect to MySQL...");
+function connectWithRetry(){
+    db.connect(err => {
+        if (err) {
+            console.error("❌ Database connection failed: ", err);
+            setTimeout(connectWithRetry, 5000);
+        }
+        console.log("✅ Connected to MySQL database!");
+    });
+}
+connectWithRetry();
 
 app.get("/", (req,res)=>{
     res.json("Hello World from the backend!!!")
@@ -31,11 +37,14 @@ app.get("/", (req,res)=>{
 //postman -> get method  http://localhost:8800/books
 app.get("/books", (req,res)=>{
     const query = "SELECT * FROM books"
-    db.query(query, (err,data)=>{
-        if (err) return res.status(500).json(err)
-        return res.json(data)
-    })
-  })
+    db.query(query, (err, data) => {
+        if (err) {
+            console.error("Database query failed:", err);
+            return res.status(500).json({ error: "Database query failed", details: err });
+        }
+        return res.json(data);
+    });
+})
 
 
   //postman ---> post method
@@ -93,5 +102,4 @@ const PORT = process.env.PORT || 8800;
 app.listen(PORT, "0.0.0.0", ()=>{
     console.log("Server is running on 8800, Connect to the backend!!!!")
 })
-
 //npm start

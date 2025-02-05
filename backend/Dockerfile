@@ -5,6 +5,7 @@ WORKDIR /user/src/app
 COPY package*.json ./
 
 RUN npm install && npm install -g nodemon
+RUN apt update && apt install -y default-mysql-client
 
 COPY . .
 
