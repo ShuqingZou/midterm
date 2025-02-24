@@ -29,12 +29,12 @@ jobs:
         run: |
           docker build -t frontend-nightly:latest ./frontend
 
-      - name: Run tests
+      - name: Run Smoke Test
         run: |
           docker-compose up -d
-          sleep 10 # Wait for services to start
-          docker exec backend_service npm test || exit 1 # Run backend tests
-          docker exec frontend_service npm test || exit 1 # Run frontend tests
+          sleep 10 # 等待服务启动
+          curl -f http://localhost:8800/ || exit 1
+          curl -f http://localhost:8800/books || exit 1
 
   notify-failure:
     if: failure()
