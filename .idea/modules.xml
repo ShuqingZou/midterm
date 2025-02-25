@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/crud-react-node-mySQL-go.iml" filepath="$PROJECT_DIR$/.idea/crud-react-node-mySQL-go.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/midterm-source.iml" filepath="$PROJECT_DIR$/.idea/midterm-source.iml" />
     </modules>
   </component>
 </project>

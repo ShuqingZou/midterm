@@ -1,42 +1,42 @@
-import express  from "express";
-import mysql from "mysql2"
-import cors from "cors"
+import express from "express";
+import mysql from "mysql2";
+import cors from "cors";
 
 const app = express();
 
-app.use(express.json())//return json data using the api server postman
-
-app.use(cors())
+app.use(express.json()); // Return JSON data using the API server postman
+app.use(cors());
 
 console.log("🚀 Backend is starting...");
 
 const db = mysql.createConnection({
-    host: "mysql_db",
-    user: "root",
-    password: "root",
-    database: "test",
+    host: process.env.DB_HOST || "mysql-db",
+    user: process.env.DB_USER || "root",
+    password: process.env.DB_PASSWORD || "root",
+    database: process.env.DB_NAME || "test",
+    port: process.env.DB_PORT || 3306,
 });
 
-
 console.log("🛠 Attempting to connect to MySQL...");
-function connectWithRetry(){
+function connectWithRetry() {
     db.connect(err => {
         if (err) {
             console.error("❌ Database connection failed: ", err);
             setTimeout(connectWithRetry, 5000);
+        } else {
+            console.log("✅ Connected to MySQL database!");
         }
-        console.log("✅ Connected to MySQL database!");
     });
 }
 connectWithRetry();
 
-app.get("/", (req,res)=>{
-    res.json("Hello World from the backend!!!")
-})
+app.get("/", (req, res) => {
+    res.json("Hello World from the backend!!!");
+});
 
-//postman -> get method  http://localhost:8800/books
-app.get("/books", (req,res)=>{
-    const query = "SELECT * FROM books"
+// GET /books
+app.get("/books", (req, res) => {
+    const query = "SELECT * FROM books";
     db.query(query, (err, data) => {
         if (err) {
             console.error("Database query failed:", err);
@@ -44,62 +44,53 @@ app.get("/books", (req,res)=>{
         }
         return res.json(data);
     });
-})
+});
 
-
-  //postman ---> post method
-  //json body bellow
-  //----------------------------- http://localhost:8800/books
-  //{
-// "title": "title from client",
-// "description": "description from client",
-// "cover": "cover from client"
-// }
-
-  app.post("/books", (req,res)=>{
-    const query = "INSERT INTO books (`title`, `description`, `price`, `cover`) VALUES (?)"
+// POST /books
+app.post("/books", (req, res) => {
+    const query = "INSERT INTO books (`title`, `description`, `price`, `cover`) VALUES (?)";
     const values = [
-       req.body.title,
-       req.body.description,
-       req.body.price,
-       req.body.cover
-    ]
+        req.body.title,
+        req.body.description,
+        req.body.price,
+        req.body.cover
+    ];
 
-    db.query(query, [values], (err,data)=>{
-        if (err) return res.status(500).json(err)
-        return res.json("Book has been created successfully!!!")
-    })
-  })
+    db.query(query, [values], (err, data) => {
+        if (err) return res.status(500).json(err);
+        return res.json("Book has been created successfully!!!");
+    });
+});
 
-  app.delete("/books/:id", (req,res)=>{
-      const bookID = req.params.id
-      const query = "DELETE FROM books WHERE id = ?"
+// DELETE /books/:id
+app.delete("/books/:id", (req, res) => {
+    const bookID = req.params.id;
+    const query = "DELETE FROM books WHERE id = ?";
 
-      db.query(query, [bookID], (err, data)=>{
-          if (err) return res.status(500).json(err)
-        return res.json("Book has been deleted successfully!!!")
-      } )
-  })
+    db.query(query, [bookID], (err, data) => {
+        if (err) return res.status(500).json(err);
+        return res.json("Book has been deleted successfully!!!");
+    });
+});
 
-  app.put("/books/:id", (req,res)=>{
-    const bookID = req.params.id
+// PUT /books/:id
+app.put("/books/:id", (req, res) => {
+    const bookID = req.params.id;
     const query = "UPDATE books SET `title`= ?, `description`= ?, `price`= ?, `cover`= ? WHERE id = ?";
-
     const values = [
-      req.body.title,
-      req.body.description,
-      req.body.price,
-      req.body.cover
-    ]
+        req.body.title,
+        req.body.description,
+        req.body.price,
+        req.body.cover
+    ];
 
-    db.query(query, [...values, bookID], (err, data)=>{
-        if (err) return res.status(500).json(err)
-        return res.json("Book has been updated successfully!!!")
-    } )
-})
+    db.query(query, [...values, bookID], (err, data) => {
+        if (err) return res.status(500).json(err);
+        return res.json("Book has been updated successfully!!!");
+    });
+});
 
 const PORT = process.env.PORT || 8800;
-app.listen(PORT, "0.0.0.0", ()=>{
-    console.log("Server is running on 8800, Connect to the backend!!!!")
-})
-//npm start
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server is running on ${PORT}, Connect to the backend!!!!`);
+});
