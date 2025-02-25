@@ -10,9 +10,9 @@ app.use(cors());
 console.log("🚀 Backend is starting...");
 
 const db = mysql.createConnection({
-    host: process.env.DB_HOST || "mysql-db",
+    host: process.env.DB_HOST || "mysql-db.cdegrojvvejq.us-east-1.rds.amazonaws.com",
     user: process.env.DB_USER || "root",
-    password: process.env.DB_PASSWORD || "root",
+    password: process.env.DB_PASSWORD || "164450zsq",
     database: process.env.DB_NAME || "test",
     port: process.env.DB_PORT || 3306,
 });
