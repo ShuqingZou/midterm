@@ -12,14 +12,20 @@ services:
       DB_NAME: "test"
       DB_PORT: "3306"
     volumes:
-      - ./backend:/user/src/app
-      - /user/src/app/node_modules
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8800/"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
 
   frontend:
     build: ./frontend
     container_name: frontend_service
     restart: always
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     ports:
       - "3000:3000"
