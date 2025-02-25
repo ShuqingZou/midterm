@@ -15,15 +15,16 @@ services:
       - ./backend:/usr/src/app
       - /usr/src/app/node_modules
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8800/"]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8800/ || exit 1" ]
       interval: 10s
       retries: 5
       timeout: 5s
+      start_period: 30s
 
   frontend:
     build: ./frontend
     container_name: frontend_service
-    restart: always
+    restart: unless-stopped
     depends_on:
       backend:
         condition: service_healthy
