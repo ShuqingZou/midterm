@@ -1,6 +1,6 @@
 services:
   backend:
-    build: ./backend
+    image: 910051580567.dkr.ecr.us-east-1.amazonaws.com/backend-nightly:latest
     container_name: backend_service
     restart: always
     ports:
@@ -11,9 +11,6 @@ services:
       DB_PASSWORD: "${DB_PASSWORD}"
       DB_NAME: "${DB_NAME}"
       DB_PORT: "${DB_PORT}"
-    volumes:
-      - ./backend:/usr/src/app
-      - /usr/src/app/node_modules
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:8800/ || exit 1" ]
       interval: 10s
@@ -22,7 +19,7 @@ services:
       start_period: 30s
 
   frontend:
-    build: ./frontend
+    image: 910051580567.dkr.ecr.us-east-1.amazonaws.com/frontend-nightly:latest
     container_name: frontend_service
     restart: unless-stopped
     depends_on:
