@@ -1,6 +1,6 @@
 services:
   backend:
-    image: backend-nightly:latest
+    build: ./backend
     container_name: backend_service
     restart: always
     ports:
@@ -11,6 +11,9 @@ services:
       DB_PASSWORD: "${DB_PASSWORD}"
       DB_NAME: "${DB_NAME}"
       DB_PORT: "${DB_PORT}"
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:8800/ || exit 1" ]
       interval: 10s
@@ -19,7 +22,7 @@ services:
       start_period: 30s
 
   frontend:
-    image: frontend-nightly:latest
+    build: ./frontend
     container_name: frontend_service
     restart: unless-stopped
     depends_on:
@@ -27,5 +30,3 @@ services:
         condition: service_healthy
     ports:
       - "3000:3000"
-    environment:
-      REACT_APP_API_URL: "${REACT_APP_API_URL}"
