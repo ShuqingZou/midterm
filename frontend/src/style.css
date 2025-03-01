@@ -62,7 +62,7 @@ img {
     border: 1px solid gray;
     text-align: center;
     background-color: lightcoral;
-    color: lightcoral;
+    color: white;
     font-weight: bold;
  }
 
@@ -71,8 +71,8 @@ img {
     padding: 10px;
     border: 1px solid gray;
     text-align: center;
-    background-color: lightcoral;
-    color: lightcoral;
+    background-color: lightskyblue;
+    color: white;
     font-weight: bold;
  }
 
